@@ -1,0 +1,392 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Dashboard {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Header -->
+{% include "includes/header.html" %}
+
+<div class="container-fluid mt--7 mb-5">
+
+  <div class="row mb-5">
+    <div class="col-xl-12">
+      <div class="card shadow">
+        <div class="card-header bg-transparent">
+          <div class="row mb-3 align-items-center justify-content-between">
+            <div class="col-4">
+              <h3 class="mb-0">Soid Data Overview</h3>
+            </div>
+            <div class="col-8 text-right">
+              <div class="dropdown">
+                
+                <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                  aria-haspopup="false" aria-expanded="false">
+                  {% if selected_land %}
+                  {{selected_land.name}}
+                  {% else %}
+                  Select Your Land
+                  {% endif %}
+                </button>
+                <input class="btn" type="button" id="datepicker" value="{% if selected_date %}
+                {{selected_date}}
+                {% else %}
+                {%  now "d-m-Y"%}
+                {% endif %}" onclick="show_dp();">
+                  </input>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  {% for land in lands %}
+                  <a class="dropdown-item" href="{% url 'soil-data' land.id %}" id>{{land.name}}</a>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-5">
+            <div class="col-xl-6 mb-5 mb-xl-0">
+              <div class="card bg-gradient-default-chart shadow">
+                <div class="card-header bg-transparent">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <!-- <h6 class="text-uppercase text-light ls-1 mb-1">Overview</h6> -->
+                      <h2 class="text-green mb-0">Moisture</h2>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="chart">
+                    {% if soil_data.mos %}
+                    <canvas id="chart-mos" class="chart-canvas"></canvas>
+                    {% else %}
+                    <h3 class="centered-div"> No Data </h3>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 mb-5 mb-xl-0">
+              <div class="card bg-gradient-default-chart shadow">
+                <div class="card-header bg-transparent">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <!-- <h6 class="text-uppercase text-light ls-1 mb-1">Overview</h6> -->
+                      <h2 class="text-green mb-0">pH</h2>
+                    </div>
+                   
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="chart">
+                    {% if soil_data.pH %}
+                    <canvas id="chart-ph" class="chart-canvas"></canvas>
+                    {% else %}
+                    <h3 class="centered-div"> No Data </h3>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-5">
+            <div class="col-xl-6 mb-5 mb-xl-0">
+              <div class="card bg-gradient-default-chart shadow">
+                <div class="card-header bg-transparent">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <!-- <h6 class="text-uppercase text-light ls-1 mb-1">Overview</h6> -->
+                      <h2 class="text-green mb-0">Nitrogen</h2>
+                    </div>
+                   
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="chart">
+                    {% if soil_data.N %}
+                    <canvas id="chart-n" class="chart-canvas"></canvas>
+                    {% else %}
+                    <h3 class="centered-div"> No Data </h3>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-6 mb-5 mb-xl-0">
+              <div class="card bg-gradient-default-chart shadow">
+                <div class="card-header bg-transparent">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <!-- <h6 class="text-uppercase text-light ls-1 mb-1">Overview</h6> -->
+                      <h2 class="text-green mb-0">Phosphorus</h2>
+                    </div>
+
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="chart">
+                    {% if soil_data.P %}
+                    <canvas id="chart-p" class="chart-canvas"></canvas>
+                    {% else %}
+                    <h3 class="centered-div"> No Data </h3>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="row mb-5">
+            <div class="col-xl-6 mb-5 mb-xl-0">
+              <div class="card bg-gradient-default-chart shadow">
+                <div class="card-header bg-transparent">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <!-- <h6 class="text-uppercase text-light ls-1 mb-1">Overview</h6> -->
+                      <h2 class="text-green mb-0">Potassium</h2>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="chart">
+                    {% if soil_data.K %}
+                    <canvas id="chart-k" class="chart-canvas"></canvas>
+                    {% else %}
+                    <h3 class="centered-div"> No Data </h3>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% include "includes/footer.html" %}
+{% endblock content %}
+
+<!-- Specific JS goes HERE -->
+{% block javascripts %}
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script>
+
+$(function() {
+    $( "#datepicker" ).datepicker({
+      dateFormat: "dd-mm-yy",
+    onSelect: function(dateText, inst) {
+      window.location.href = "/dashboard/soil-data/{{selected_land.id}}/"+dateText;
+
+    }
+})
+  });
+  
+  function show_dp(){
+      $( "#datepicker" ).datepicker('show'); //Show on click of button
+     }
+
+//
+// soil data chart
+//
+
+var soil_data_chart = (function() {
+
+// Variables
+
+var $chart_ph = $('#chart-ph');
+var $chart_mos = $('#chart-mos');
+var $chart_n = $('#chart-n');
+var $chart_p = $('#chart-p');
+var $chart_k = $('#chart-k');
+
+
+function init_ph($chart) {
+
+  var phChart = new Chart($chart, {
+    type: 'line',
+    options: {
+      scales: {
+        yAxes: [{
+          gridLines: {
+            lineWidth: 1,
+            color: Charts.colors.gray[900],
+            zeroLineColor: Charts.colors.gray[900]
+          },
+          ticks: {
+            beginAtZero: true,
+            stepSize: 2,
+            max: 14,
+            min: 0,
+            callback: function(value, index, values) {
+              return (index < 15) ? value : null;
+            }
+          }
+        }]
+      },
+      tooltips: {
+        callbacks: {
+          label: function(item, data) {
+            var label = data.datasets[item.datasetIndex].label || '';
+            var yLabel = item.yLabel;
+            var content = '';
+
+            if (data.datasets.length > 1) {
+              content += '<span class="popover-body-label mr-auto">' + label + '</span>';
+            }
+
+            content += '<span class="popover-body-value">pH: ' + yLabel;
+            return content;
+          }
+        }
+      }
+    },
+    data: {
+      labels: ['3 AM', '6 AM', '9 AM', '12 PM','3 PM','6 PM','9 PM','12 AM' ],
+      datasets: [{
+        label: 'pH',
+        data: {{soil_data.pH|safe}},
+      }]
+    }
+  });
+
+};
+
+
+function init_mos($chart) {
+
+  var mosChart = new Chart($chart, {
+    type: 'line',
+    options: {
+      scales: {
+        yAxes: [{
+          gridLines: {
+            lineWidth: 1,
+            color: Charts.colors.gray[900],
+            zeroLineColor: Charts.colors.gray[900]
+          },
+          ticks: {
+            beginAtZero: true,
+            stepSize: 20,
+            max: 100,
+            min: 0,
+            callback: function(value, index, values) {
+              return (index < 101) ? value : null;
+            }
+          }
+        }]
+      },
+      tooltips: {
+        callbacks: {
+          label: function(item, data) {
+            var label = data.datasets[item.datasetIndex].label || '';
+            var yLabel = item.yLabel;
+            var content = '';
+
+            if (data.datasets.length > 1) {
+              content += '<span class="popover-body-label mr-auto">' + label + '</span>';
+            }
+
+            content += '<span class="popover-body-value">mos: ' + yLabel +' %' +'</span>';
+            return content;
+          }
+        }
+      }
+    },
+    data: {
+      labels: ['3 AM', '6 AM', '9 AM', '12 PM','3 PM','6 PM','9 PM','12 AM'  ],
+      datasets: [{
+        label: 'Moisture',
+        data: {{soil_data.mos|safe}}
+      }]
+    }
+  });
+
+};
+
+function init_NPK($chart, data) {
+
+  var salesChart = new Chart($chart, {
+    type: 'line',
+    options: {
+      scales: {
+        yAxes: [{
+          gridLines: {
+            lineWidth: 1,
+            color: Charts.colors.gray[900],
+            zeroLineColor: Charts.colors.gray[900]
+          },
+          ticks: {
+            min: 0,
+            callback: function(value) {
+              if (!(value % 10)) {
+                return value;
+              }
+            }
+          }
+        }]
+      },
+      tooltips: {
+        callbacks: {
+          label: function(item, data) {
+            var label = data.datasets[item.datasetIndex].label || '';
+            var yLabel = item.yLabel;
+            var content = '';
+
+            if (data.datasets.length > 1) {
+              content += '<span class="popover-body-label mr-auto">' + label + '</span>';
+            }
+
+            content += '<span class="popover-body-value">' + yLabel + '</span>';
+            return content;
+          }
+        }
+      }
+    },
+    data: {
+      labels: [ '3 AM', '6 AM', '9 AM', '12 PM','3 PM','6 PM','9 PM','12 AM'  ],
+      datasets: [{
+        label: 'NPK',
+        data: data
+      }]
+    }
+  });
+
+};
+
+
+
+
+if ($chart_ph.length) {
+  init_ph($chart_ph);
+}
+if ($chart_mos.length) {
+  init_mos($chart_mos);
+}
+if ($chart_n.length) {
+  init_NPK($chart_n,{{soil_data.N|safe}});
+}
+if ($chart_p.length) {
+  init_NPK($chart_p,{{soil_data.P|safe}});
+}
+if ($chart_k.length) {
+  init_NPK($chart_k,{{soil_data.K|safe}});
+}
+
+})();
+
+</script>
+
+{% endblock javascripts %}
